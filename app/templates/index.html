@@ -2,22 +2,93 @@
 <html>
 <head>
     <meta name="color-scheme" content="light dark">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Container for the list item to make everything line up */
+        .item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            gap: 15px;
+        }
+
+        /* Ensures the original text takes up available space */
+        .item-text {
+            flex: 1;
+            min-width: 100px;
+            word-break: break-word;
+        }
+
+        /* Groups the update and delete forms together on the right */
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Styling for inputs and buttons */
+        input[type="text"] {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #666;
+            background: transparent;
+            color: inherit;
+        }
+
+        button {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .btn-submit { background-color: #007bff; color: white; }
+        .btn-update { background-color: #28a745; color: white; }
+        .btn-delete { background-color: #dc3545; color: white; }
+
+        ul { list-style: none; padding: 0; }
+    </style>
 </head>
 <body>
     <h2>Three-Tier Docker Application Demo (Nginx-Flask-MongoDB)</h2>
-    <form method="POST">
-        <input type="text" name="content" placeholder="Type something..." required>
-        <button type="submit">Submit</button>
+    
+    <form method="POST" style="margin-bottom: 20px;">
+        <input type="text" name="content" placeholder="Type something..." required style="width: 250px;">
+        <button type="submit" class="btn-submit">Submit</button>
     </form>
+
     <hr>
     <h3>Stored Values:</h3>
     <ul>
     {% for item in items %}
-        <li>
-            {{ item.content }}
-            <form action="/delete/{{ item._id }}" method="POST" style="display:inline;">
-                <button type="submit">Delete</button>
-            </form>
+        <li class="item-row">
+            <span class="item-text">{{ item.content }}</span>
+
+            <div class="actions">
+                <form action="/update/{{ item._id }}" method="POST" style="display: flex; gap: 5px;">
+                    <input type="text" name="content" value="{{ item.content }}" required>
+                    <button type="submit" class="btn-update">Update</button>
+                </form>
+
+                <form action="/delete/{{ item._id }}" method="POST">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </div>
         </li>
     {% endfor %}
     </ul>

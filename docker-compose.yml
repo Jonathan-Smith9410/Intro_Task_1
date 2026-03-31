@@ -1,13 +1,13 @@
 services:
   database:
-    image: mongo:latest
+    image: mongo:8.0
     container_name: mongodb_tier
     ports:
       - "27017:27017"
 
   webapp:
     build: ./app
-    container_name: python_tier
+    container_name: application_tier
     environment:
       - MONGO_URI=mongodb://database:27017/
     depends_on:

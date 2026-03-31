@@ -19,6 +19,16 @@ def index():
     items = collection.find()
     return render_template('index.html', items=items)
 
+@app.route('/update/<id>', methods=['POST'])
+def update_item(id):
+    from bson.objectid import ObjectId
+    new_content = request.form['content']
+    collection.update_one(
+        {'_id': ObjectId(id)},
+        {'$set': {'content': new_content}}
+    )
+    return redirect('/')
+
 @app.route('/delete/<id>', methods=['POST'])
 def delete_item(id):
     from bson.objectid import ObjectId
