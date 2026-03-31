@@ -1,0 +1,22 @@
+services:
+  database:
+    image: mongo:latest
+    container_name: mongodb_tier
+    ports:
+      - "27017:27017"
+
+  webapp:
+    build: ./app
+    container_name: python_tier
+    environment:
+      - MONGO_URI=mongodb://database:27017/
+    depends_on:
+      - database
+
+  nginx:
+    build: ./nginx
+    container_name: nginx_tier
+    ports:
+      - "8080:80"
+    depends_on:
+      - webapp
