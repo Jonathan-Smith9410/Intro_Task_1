@@ -1,0 +1,59 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          cd app
+          pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: |
+          cd app
+          pytest test_app.py
+
+  build-and-push:
+    needs: test  # Only run this if tests pass
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Webapp Image
+        run: docker build -t my-flask-app:latest ./app
+
+      - name: Build Nginx Image
+        run: docker build -t my-nginx:latest ./nginx
+
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start services
+        run: docker-compose up -d
+
+      - name: Check if Webapp is healthy
+        run: |
+          sleep 10  # Give it time to start
+          curl --fail http://localhost:8080 || exit 1
+
+      - name: Shutdown services
+        run: docker-compose down
