@@ -41,7 +41,7 @@ jobs:
       - name: Build Nginx Image
         run: docker build -t my-nginx:latest ./nginx
 
-integration-test:
+  integration-test:
     needs: test
     runs-on: ubuntu-latest
     steps:
