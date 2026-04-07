@@ -49,16 +49,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Start services
-        # Use 'docker compose' (no hyphen) and --build
         run: docker compose up -d --build
 
       - name: Check if Webapp is healthy
         run: |
           echo "Waiting for services to start..."
           sleep 15
-          # Note: Port 8080 is what Nginx maps to in your docker-compose.yml
           curl --fail http://localhost:8080 || exit 1
 
       - name: Shutdown services
-        if: always() # Ensures cleanup runs even if the curl fails
+        if: always() # Ensure cleanup runs even if the curl fails
         run: docker compose down
